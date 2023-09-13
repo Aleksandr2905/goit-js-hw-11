@@ -23,9 +23,7 @@ const onSearchFormElSubmit = event => {
     }
         
     pixabayAPI.fetchPhotosByQuery()
-        .then(data => {
-            console.log(data);
-
+        .then(({data}) => {
             if (data.totalHits === 0) {
                 alert`Некоректне слово для пошуку`
 
@@ -54,7 +52,7 @@ const onSearchFormElSubmit = event => {
 const onLoadMoreBtnElClick = event => { 
     pixabayAPI.page += 1;
     pixabayAPI.fetchPhotosByQuery()
-        .then(data => {
+        .then(({data}) => {
             refs.galleryEl.insertAdjacentHTML('beforeend', createGalleryCards(data.hits));
 
             if (pixabayAPI.page === data.totalHits) {
