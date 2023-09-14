@@ -1,3 +1,4 @@
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { PixabayAPI } from "./pixabay-api";
 import { createGalleryCards } from "./gallery-cards";
 
@@ -17,7 +18,7 @@ const onSearchFormElSubmit = async event => {
     pixabayAPI.page = 1;
 
     if (pixabayAPI.query === '') {
-        alert`Введіть слово для пошуку`
+        Notify.failure(`Enter a word to search for`)
             
         return;
     }
@@ -25,7 +26,7 @@ const onSearchFormElSubmit = async event => {
     try { 
     const { data } = await pixabayAPI.fetchPhotosByQuery();
     if (data.totalHits === 0) {
-        alert`Некоректне слово для пошуку`
+        Notify.failure(`Invalid search word`)
 
         event.target.reset();
 
@@ -58,9 +59,10 @@ const onLoadMoreBtnElClick = async event => {
 
     if (pixabayAPI.page === data.totalHits) {
     refs.loadMoreBtnEl.classList.add('is-hidden'); 
+    Notify.failure(`We're sorry, but you've reached the end of search results`);    
     }
     } catch (err) {
-        console.log(err);
+        Notify.failure('err');
     }    
 };
 
