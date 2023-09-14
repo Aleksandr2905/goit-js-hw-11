@@ -18,7 +18,7 @@ const onSearchFormElSubmit = async event => {
     pixabayAPI.page = 1;
 
     if (pixabayAPI.query === '') {
-        Notify.failure(`Enter a word to search for`)
+        Notiflix.Notify.failure(`Enter a word to search for`)
             
         return;
     }
@@ -26,7 +26,7 @@ const onSearchFormElSubmit = async event => {
     try { 
     const { data } = await pixabayAPI.fetchPhotosByQuery();
     if (data.totalHits === 0) {
-        Notify.failure(`Invalid search word`)
+        Notiflix.Notify.failure(`Invalid search word`)
 
         event.target.reset();
 
@@ -41,8 +41,8 @@ const onSearchFormElSubmit = async event => {
         refs.galleryEl.innerHTML = createGalleryCards(data.hits);
         refs.loadMoreBtnEl.classList.add('is-hidden');
     }
-    refs.galleryEl.innerHTML = createGalleryCards(data.hits);
-    refs.loadMoreBtnEl.classList.remove('is-hidden');
+        refs.galleryEl.innerHTML = createGalleryCards(data.hits);
+        refs.loadMoreBtnEl.classList.remove('is-hidden');
     } catch (err) {
         console.log(err);
     }   
@@ -54,15 +54,16 @@ const onLoadMoreBtnElClick = async event => {
     pixabayAPI.page += 1;
 
     try {
-        const { data } = await pixabayAPI.fetchPhotosByQuery()
+        const { data } = await pixabayAPI.fetchPhotosByQuery();
         refs.galleryEl.insertAdjacentHTML('beforeend', createGalleryCards(data.hits));
 
-        if (pixabayAPI.page === data.totalHits) {
-        refs.loadMoreBtnEl.classList.add('is-hidden'); 
-        Notify.failure(`We're sorry, but you've reached the end of search results`);    
+        if (pixabayAPI.page >= data.totalHits / pixabayAPI.page) {
+            refs.loadMoreBtnEl.classList.add('is-hidden'); 
+            Notify.failure(`We're sorry, but you've reached the end of search results`)
+         return;    
         }
     } catch (err) {
-        Notify.failure(`err`);
+        console.log(err);
     }    
 };
 
