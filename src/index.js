@@ -9,7 +9,7 @@ const refs = {
 
 const pixabayAPI = new PixabayAPI();
 
-const onSearchFormElSubmit = event => {
+const onSearchFormElSubmit = async event => {
     event.preventDefault();
 
     pixabayAPI.query = event.target.searchQuery.value.trim();
@@ -18,51 +18,50 @@ const onSearchFormElSubmit = event => {
 
     if (pixabayAPI.query === '') {
         alert`Введіть слово для пошуку`
-        
+            
         return;
     }
-        
-    pixabayAPI.fetchPhotosByQuery()
-        .then(({data}) => {
-            if (data.totalHits === 0) {
-                alert`Некоректне слово для пошуку`
 
-                event.target.reset();
+    try { 
+    const { data } = await pixabayAPI.fetchPhotosByQuery();
+    if (data.totalHits === 0) {
+        alert`Некоректне слово для пошуку`
 
-                refs.galleryEl.innerHTML = '';
+        event.target.reset();
 
-                refs.loadMoreBtnEl.classList.add('is-hidden');
+        refs.galleryEl.innerHTML = '';
 
-                return;
-            }
+        refs.loadMoreBtnEl.classList.add('is-hidden');
 
-            if (data.totalHits === 1) {
-                refs.galleryEl.innerHTML = createGalleryCards(data.hits);
-                refs.loadMoreBtnEl.classList.add('is-hidden');
-            }
+        return;
+    };
 
-            refs.galleryEl.innerHTML = createGalleryCards(data.hits);
-            refs.loadMoreBtnEl.classList.remove('is-hidden');
-        })
-        .catch(err => {
-            console.log(err);
-        });
-}
+    if (data.totalHits === 1) {
+        refs.galleryEl.innerHTML = createGalleryCards(data.hits);
+        refs.loadMoreBtnEl.classList.add('is-hidden');
+    }
+    refs.galleryEl.innerHTML = createGalleryCards(data.hits);
+    refs.loadMoreBtnEl.classList.remove('is-hidden');
+    } catch (err) {
+        console.log(err);
+    }   
 
-const onLoadMoreBtnElClick = event => { 
+};    
+
+
+const onLoadMoreBtnElClick = async event => { 
     pixabayAPI.page += 1;
-    pixabayAPI.fetchPhotosByQuery()
-        .then(({data}) => {
-            refs.galleryEl.insertAdjacentHTML('beforeend', createGalleryCards(data.hits));
 
-            if (pixabayAPI.page === data.totalHits) {
-               refs.loadMoreBtnEl.classList.add('is-hidden'); 
-            }
-        })
-        .catch(err => {
-            console.log(err);
-        });
+    try {
+    const { data } = await pixabayAPI.fetchPhotosByQuery()
+    refs.galleryEl.insertAdjacentHTML('beforeend', createGalleryCards(data.hits));
 
+    if (pixabayAPI.page === data.totalHits) {
+    refs.loadMoreBtnEl.classList.add('is-hidden'); 
+    }
+    } catch (err) {
+        console.log(err);
+    }    
 };
 
 refs.searchFormEl.addEventListener('submit', onSearchFormElSubmit);
