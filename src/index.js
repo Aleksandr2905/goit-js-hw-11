@@ -57,9 +57,9 @@ const onLoadMoreBtnElClick = async event => {
         const { data } = await pixabayAPI.fetchPhotosByQuery();
         refs.galleryEl.insertAdjacentHTML('beforeend', createGalleryCards(data.hits));
 
-        if (pixabayAPI.page >= Math.ceil(data.totalHits / pixabayAPI.page)) {
+        if (pixabayAPI.page >= Math.ceil(pixabayAPI.page / data.totalHits)) {
             refs.loadMoreBtnEl.classList.add('is-hidden'); 
-            Notify.failure(`We're sorry, but you've reached the end of search results`)
+            Notify.failure(`We're sorry, but you've reached the end of search results`);
             return;    
         }
     } catch (err) {
