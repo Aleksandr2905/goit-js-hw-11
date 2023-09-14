@@ -54,13 +54,13 @@ const onLoadMoreBtnElClick = async event => {
     pixabayAPI.page += 1;
 
     try {
-    const { data } = await pixabayAPI.fetchPhotosByQuery()
-    refs.galleryEl.insertAdjacentHTML('beforeend', createGalleryCards(data.hits));
+        const { data } = await pixabayAPI.fetchPhotosByQuery()
+        refs.galleryEl.insertAdjacentHTML('beforeend', createGalleryCards(data.hits));
 
-    if (pixabayAPI.page === data.totalHits) {
-    refs.loadMoreBtnEl.classList.add('is-hidden'); 
-    Notify.failure(`We're sorry, but you've reached the end of search results`);    
-    }
+        if (pixabayAPI.page === data.totalHits) {
+        refs.loadMoreBtnEl.classList.add('is-hidden'); 
+        Notify.failure(`We're sorry, but you've reached the end of search results`);    
+        }
     } catch (err) {
         Notify.failure(`err`);
     }    
